@@ -16,7 +16,10 @@
         "delete": "ts-node scripts/delete.ts",
         "jito": "ts-node scripts/jito.ts",
         "create-token-2022-multisig": "ts-node scripts/create-token-2022-multisig.ts",
-        "execute":"ts-node scripts/execute-multisig.ts"
+        "execute": "ts-node scripts/execute-multisig.ts",
+        "raydiumCreatePool": "ts-node scripts/raydium/create-pool.ts",
+        "raydiumAddLiquidity": "ts-node scripts/raydium/add-liquidity.ts",
+        "checkPool": "ts-node scripts/raydium/check-pool.ts"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.30.1",
@@ -26,6 +29,7 @@
         "@metaplex-foundation/umi": "^1.2.0",
         "@metaplex-foundation/umi-bundle-defaults": "^1.2.0",
         "@metaplex-foundation/umi-web3js-adapters": "^1.2.0",
+        "@raydium-io/raydium-sdk-v2": "^0.2.17-alpha",
         "@solana-program/memo": "^0.7.0",
         "@solana-program/system": "^0.7.0",
         "@solana/kit": "^2.1.1",

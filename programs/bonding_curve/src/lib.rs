@@ -12,7 +12,7 @@ use crate::instructions::allocation::{
 use crate::instructions::*;
 use crate::state::allocation::Vesting;
 use crate::state::Recipient;
-declare_id!("CB18NKSvKunD2xeuvEkKfBxuz4fJFJJ8GPy5w1dMzN1");
+declare_id!("EPA9LC7sm4SmiZXU9yv8h8VfzAUNd3SF7CxyPSiDfNQK");
 
 #[program]
 pub mod bonding_curve {
