@@ -5,10 +5,10 @@ import BN from 'bn.js';
 async function checkPool() {
   try {
     const raydium = await initSdk();
-    const poolId = new PublicKey('3WoHTgokWfa1gxTtRE3Gf2CYqWSExaFW1BBHdb6ynPkv');
+    const poolId = new PublicKey('F7hmWcY3ULGJL39MbP8JdTuPdAWaQMYC9GfHy4gL6kPr');
     console.log('Pool Info from poolID :', poolId.toBase58());
     const pool = await raydium.cpmm.getPoolInfoFromRpc( poolId.toString());
-    console.log('Thông tin pool:', JSON.stringify(pool, null, 2));
+    console.log('Pool info:', JSON.stringify(pool, null, 2));
     console.log('Pool status:', pool.rpcData.status);
     console.log('Base Reserve:', new BN(pool.rpcData.baseReserve, 16).toString());
     console.log('Quote Reserve:', new BN(pool.rpcData.quoteReserve, 16).toString());

@@ -43,7 +43,7 @@ async function addLiquidity() {
       throw new Error('Pool has no initial liquidity.');
     }
 
-    // Lấy mint A và B trực tiếp từ poolInfo
+    // take mintA and mintB from poolInfo
     const mintA = new PublicKey(poolInfo.mintA.address);
     const mintB = new PublicKey(poolInfo.mintB.address);
 
@@ -70,7 +70,7 @@ async function addLiquidity() {
     const baseIn = true;
     const slippage = new Percent(1, 100); // 1%
 
-    // Tạo ATA nếu chưa có
+    // validate ATA
     const ataAInfo = await connection.getAccountInfo(ataA);
     if (!ataAInfo) {
       transaction.add(
@@ -100,7 +100,7 @@ async function addLiquidity() {
       );
     }
 
-    // Nếu mint là WSOL thì wrap SOL
+    // validate WSOL
     if (poolInfo.mintA.symbol === 'WSOL' || poolInfo.mintB.symbol === 'WSOL') {
       const wsolATA = poolInfo.mintA.symbol === 'WSOL' ? ataA : ataB;
       console.log(`Wrapping ${inputAmount.toNumber() / 1e9} SOL into WSOL...`);
@@ -114,7 +114,7 @@ async function addLiquidity() {
       );
     }
 
-    // Gửi setup transaction (ATA + wrap SOL)
+    // send setup transaction (ATA + wrap SOL)
     if (transaction.instructions.length > 0) {
       const { blockhash } = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
@@ -124,7 +124,7 @@ async function addLiquidity() {
       console.log('Setup transaction sent:', txId);
     }
 
-    // Kiểm tra balance
+    // check balance
     const accountA = await getAccount(
       connection,
       ataA,
@@ -144,7 +144,7 @@ async function addLiquidity() {
     console.log(`Balance mintA: ${accountA.amount.toString()}`);
     console.log(`Balance mintB: ${accountB.amount.toString()}`);
 
-    // Gửi add liquidity transaction
+    // send add liquidity transaction
     console.log('Sending add liquidity transaction...');
     const addLiquidityResult = await raydium.cpmm.addLiquidity({
       poolInfo,
@@ -162,7 +162,7 @@ async function addLiquidity() {
     const { execute } = addLiquidityResult;
     const { txId } = await execute({ sendAndConfirm: true });
     console.log('Liquidity added! TxId:', txId);
-
+    
     process.exit(0);
   } catch (error) {
     console.error('Error while adding liquidity:', error);

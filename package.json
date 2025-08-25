@@ -19,7 +19,9 @@
         "execute": "ts-node scripts/execute-multisig.ts",
         "raydiumCreatePool": "ts-node scripts/raydium/create-pool.ts",
         "raydiumAddLiquidity": "ts-node scripts/raydium/add-liquidity.ts",
-        "checkPool": "ts-node scripts/raydium/check-pool.ts"
+        "raydiumRemoveLiquidity": "ts-node scripts/raydium/remove-liquidity.ts",
+        "raydiumCheckPool": "ts-node scripts/raydium/check-pool.ts",
+        "raydiumGetPool":"ts-node scripts/raydium/get-pool.ts"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.30.1",

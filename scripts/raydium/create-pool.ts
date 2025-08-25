@@ -18,35 +18,15 @@ console.log("Wallet: ", owner.publicKey.toBase58());
 async function createPool() {
     try {
         const raydium = await initSdk();
-        const customTokenMint: ApiV3Token = {
-            address: '6bFrQFafiPceFAiYwXEarVWSuQhA9hNkHSKovJTRxNRm',
-            decimals: 9,
-            programId: TOKEN_2022_PROGRAM_ID.toString(),
-            chainId: 101,
-            logoURI: '',
-            symbol: 'CUSTOM',
-            name: 'Custom Token',
-            extensions: {},
-            tags: ['custom-token'],
-        };
-        const WSOLMint: ApiV3Token = {
-            address: NATIVE_MINT.toString(),
-            decimals: 9,
-            programId: TOKEN_PROGRAM_ID.toString(),
-            chainId: 101,
-            logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
-            symbol: 'WSOL',
-            name: 'Wrapped SOL',
-            extensions: {},
-            tags: ['wrapped-sol'],
-        };
+        const customMint = new PublicKey('7HhHBdwxPcpfPYrVzXVnuMjrPsRnXrTYp5gQs2qkFkSw');
+        const wsolMint = new PublicKey(NATIVE_MINT);
+        const customDecimals = 9;
+        const wsolDecimals = 9;
 
-        const customTokenMintPubkey = new PublicKey(customTokenMint.address);
-        const wsolMintPubkey = new PublicKey(WSOLMint.address);
         const ownerPubkey = owner.publicKey;
 
-        const customTokenATA = await getAssociatedTokenAddress(customTokenMintPubkey, ownerPubkey, false, TOKEN_2022_PROGRAM_ID);
-        const wsolATA = await getAssociatedTokenAddress(wsolMintPubkey, ownerPubkey, false, TOKEN_PROGRAM_ID);
+        const customTokenATA = await getAssociatedTokenAddress(customMint, ownerPubkey, false, TOKEN_2022_PROGRAM_ID);
+        const wsolATA = await getAssociatedTokenAddress(wsolMint, ownerPubkey, false, TOKEN_PROGRAM_ID);
         const transaction = new Transaction();
         const customTokenAccountInfo = await connection.getAccountInfo(customTokenATA);
         if (!customTokenAccountInfo) {
@@ -56,7 +36,7 @@ async function createPool() {
                     ownerPubkey,
                     customTokenATA,
                     ownerPubkey,
-                    customTokenMintPubkey,
+                    customMint,
                     TOKEN_2022_PROGRAM_ID
                 )
             );
@@ -69,7 +49,7 @@ async function createPool() {
                     ownerPubkey,
                     wsolATA,
                     ownerPubkey,
-                    wsolMintPubkey,
+                    wsolATA,
                     TOKEN_PROGRAM_ID
                 )
             );
@@ -92,13 +72,11 @@ async function createPool() {
         console.log(`WSOL ATA balance: ${wsolTokenAccount.amount.toString()} lamports`);
 
         const ownerInfo = { useSOLBalance: true };
-        const mintA = new PublicKey(customTokenMint.address);
-        const mintB = new PublicKey(WSOLMint.address);
-        const isSorted = mintA.toBuffer().compare(mintB.toBuffer()) < 0;
+        const isSorted = customMint.toBuffer().compare(wsolMint.toBuffer()) < 0;
         console.log(`Token pair order: ${isSorted ? 'Correct (mintA < mintB)' : 'Incorrect (mintA > mintB), swapping...'}`);
-        const [sortedMintA, sortedMintB, sortedMintAAmount, sortedMintBAmount] = isSorted
-            ? [customTokenMint, WSOLMint, new BN(1_000_000), new BN(100_000_000)]
-            : [WSOLMint, customTokenMint, new BN(100_000_000), new BN(1_000_000)];
+        const [mintA, mintB, mintAAmount, mintBAmount] = isSorted
+            ? [customMint, wsolMint, new BN(1_000_000), new BN(100_000_000)]
+            : [wsolMint, customMint, new BN(100_000_000), new BN(1_000_000)];
 
         const feeConfigs = [
             {
@@ -111,23 +89,25 @@ async function createPool() {
                 creatorFeeRate: 0
             },
         ];
-
-        console.log('Creating pool with parameters:', {
-            programId: DEVNET_PROGRAM_ID.CREATE_CPMM_POOL_PROGRAM.toBase58(),
-            poolFeeAccount: DEVNET_PROGRAM_ID.CREATE_CPMM_POOL_FEE_ACC.toBase58(),
-            mintA: sortedMintA.address,
-            mintB: sortedMintB.address,
-            mintAAmount: sortedMintAAmount.toString(),
-            mintBAmount: sortedMintBAmount.toString(),
-            feeConfig: feeConfigs[0],
-        });
         const { execute, extInfo } = await raydium.cpmm.createPool({
             programId: DEVNET_PROGRAM_ID.CREATE_CPMM_POOL_PROGRAM,
             poolFeeAccount: DEVNET_PROGRAM_ID.CREATE_CPMM_POOL_FEE_ACC,
-            mintA: sortedMintA,
-            mintB: sortedMintB,
-            mintAAmount: sortedMintAAmount,
-            mintBAmount: sortedMintBAmount,
+            mintA: {
+                address: mintA.toBase58(),
+                decimals: mintA.equals(customMint) ? customDecimals : wsolDecimals,
+                programId: mintA.equals(customMint)
+                    ? TOKEN_2022_PROGRAM_ID.toString()
+                    : TOKEN_PROGRAM_ID.toString(),
+            },
+            mintB: {
+                address: mintB.toBase58(),
+                decimals: mintB.equals(customMint) ? customDecimals : wsolDecimals,
+                programId: mintB.equals(customMint)
+                    ? TOKEN_2022_PROGRAM_ID.toString()
+                    : TOKEN_PROGRAM_ID.toString(),
+            },
+            mintAAmount: mintAAmount,
+            mintBAmount: mintBAmount,
             startTime: new BN(0),
             feeConfig: feeConfigs[0],
             associatedOnly: false,
