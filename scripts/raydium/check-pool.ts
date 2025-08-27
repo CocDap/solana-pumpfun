@@ -5,7 +5,7 @@ import BN from 'bn.js';
 async function checkPool() {
   try {
     const raydium = await initSdk();
-    const poolId = new PublicKey('F7hmWcY3ULGJL39MbP8JdTuPdAWaQMYC9GfHy4gL6kPr');
+    const poolId = new PublicKey('3WoHTgokWfa1gxTtRE3Gf2CYqWSExaFW1BBHdb6ynPkv');
     console.log('Pool Info from poolID :', poolId.toBase58());
     const pool = await raydium.cpmm.getPoolInfoFromRpc( poolId.toString());
     console.log('Pool info:', JSON.stringify(pool, null, 2));
