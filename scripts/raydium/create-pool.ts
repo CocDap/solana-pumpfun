@@ -1,7 +1,7 @@
-import { DEVNET_PROGRAM_ID, getCpmmPdaAmmConfigId, ApiV3Token } from '@raydium-io/raydium-sdk-v2';
+import { DEVNET_PROGRAM_ID, getCpmmPdaAmmConfigId } from '@raydium-io/raydium-sdk-v2';
 import BN from 'bn.js';
-import { initSdk, connection, owner, txVersion } from './config';
-import { PublicKey, Transaction, SystemProgram } from '@solana/web3.js';
+import { initSdk, connection, owner, txVersion, askQuestion } from './config';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import {
     TOKEN_2022_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
@@ -11,25 +11,24 @@ import {
     NATIVE_MINT
 } from '@solana/spl-token';
 
-import { Wallet } from '@coral-xyz/anchor';
-
 console.log("Wallet: ", owner.publicKey.toBase58());
 
 async function createPool() {
     try {
         const raydium = await initSdk();
-        const customMint = new PublicKey('7HhHBdwxPcpfPYrVzXVnuMjrPsRnXrTYp5gQs2qkFkSw');
+        const customMint = new PublicKey('mFdgzb42kwstGicCATiyZUYXbLDmtGvBquDsyQJwQEb');
         const wsolMint = new PublicKey(NATIVE_MINT);
         const customDecimals = 9;
         const wsolDecimals = 9;
 
         const ownerPubkey = owner.publicKey;
 
+        // Ensure ATA exists
         const customTokenATA = await getAssociatedTokenAddress(customMint, ownerPubkey, false, TOKEN_2022_PROGRAM_ID);
         const wsolATA = await getAssociatedTokenAddress(wsolMint, ownerPubkey, false, TOKEN_PROGRAM_ID);
         const transaction = new Transaction();
-        const customTokenAccountInfo = await connection.getAccountInfo(customTokenATA);
-        if (!customTokenAccountInfo) {
+
+        if (!(await connection.getAccountInfo(customTokenATA))) {
             console.log('Creating ATA for custom token...');
             transaction.add(
                 createAssociatedTokenAccountInstruction(
@@ -41,15 +40,14 @@ async function createPool() {
                 )
             );
         }
-        const wsolAccountInfo = await connection.getAccountInfo(wsolATA);
-        if (!wsolAccountInfo) {
+        if (!(await connection.getAccountInfo(wsolATA))) {
             console.log('Creating ATA for WSOL...');
             transaction.add(
                 createAssociatedTokenAccountInstruction(
                     ownerPubkey,
                     wsolATA,
                     ownerPubkey,
-                    wsolATA,
+                    wsolMint,
                     TOKEN_PROGRAM_ID
                 )
             );
@@ -63,20 +61,27 @@ async function createPool() {
             await connection.confirmTransaction(signature, 'confirmed');
             console.log('ATA(s) created with transaction:', signature);
         }
-        console.log('Checking token balances...');
-        console.log('Custom token ATA:', customTokenATA.toBase58());
-        console.log('WSOL ATA:', wsolATA.toBase58());
+
+        console.log('Checking balances...');
         const customTokenAccount = await getAccount(connection, customTokenATA, 'confirmed', TOKEN_2022_PROGRAM_ID);
         const wsolTokenAccount = await getAccount(connection, wsolATA, 'confirmed', TOKEN_PROGRAM_ID);
-        console.log(`Custom token ATA balance: ${customTokenAccount.amount.toString()} tokens`);
-        console.log(`WSOL ATA balance: ${wsolTokenAccount.amount.toString()} lamports`);
+        console.log(`Custom token balance: ${customTokenAccount.amount.toString()}`);
+        console.log(`WSOL balance: ${wsolTokenAccount.amount.toString()}`);
 
-        const ownerInfo = { useSOLBalance: true };
+        // Dynamic user input
+        const amountAInput = await askQuestion("Enter amount for custom token (mintA): ");
+        const amountBInput = await askQuestion("Enter amount for WSOL (mintB): ");
+
+        // Convert to BN with decimals
+        const customAmountBN = new BN(Math.floor(parseFloat(amountAInput) * 10 ** customDecimals).toString());
+        const wsolAmountBN = new BN(Math.floor(parseFloat(amountBInput) * 10 ** wsolDecimals).toString());
+
         const isSorted = customMint.toBuffer().compare(wsolMint.toBuffer()) < 0;
-        console.log(`Token pair order: ${isSorted ? 'Correct (mintA < mintB)' : 'Incorrect (mintA > mintB), swapping...'}`);
         const [mintA, mintB, mintAAmount, mintBAmount] = isSorted
-            ? [customMint, wsolMint, new BN(1_000_000), new BN(100_000_000)]
-            : [wsolMint, customMint, new BN(100_000_000), new BN(1_000_000)];
+            ? [customMint, wsolMint, customAmountBN, wsolAmountBN]
+            : [wsolMint, customMint, wsolAmountBN, customAmountBN];
+
+        console.log(`Pool price (approx): ${mintBAmount.toNumber() / mintAAmount.toNumber()}`);
 
         const feeConfigs = [
             {
@@ -89,6 +94,7 @@ async function createPool() {
                 creatorFeeRate: 0
             },
         ];
+
         const { execute, extInfo } = await raydium.cpmm.createPool({
             programId: DEVNET_PROGRAM_ID.CREATE_CPMM_POOL_PROGRAM,
             poolFeeAccount: DEVNET_PROGRAM_ID.CREATE_CPMM_POOL_FEE_ACC,
@@ -106,24 +112,24 @@ async function createPool() {
                     ? TOKEN_2022_PROGRAM_ID.toString()
                     : TOKEN_PROGRAM_ID.toString(),
             },
-            mintAAmount: mintAAmount,
-            mintBAmount: mintBAmount,
+            mintAAmount,
+            mintBAmount,
             startTime: new BN(0),
             feeConfig: feeConfigs[0],
             associatedOnly: false,
-            ownerInfo,
+            ownerInfo: { useSOLBalance: true },
             txVersion,
         });
 
-        console.log('Executing pool creation transaction...');
+        console.log('Executing pool creation...');
         const { txId } = await execute({ sendAndConfirm: true });
         console.log('Pool created with txId:', txId);
         console.log('Pool ID:', extInfo.address.poolId.toBase58());
 
         process.exit(0);
-    }
-    catch (error) {
-
+    } catch (error) {
+        console.error("Error creating pool:", error);
     }
 }
-createPool()
+
+createPool();

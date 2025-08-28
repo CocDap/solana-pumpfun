@@ -29,7 +29,7 @@ async function removeLiquidity() {
   }
   console.log('Pool info & keys loaded')
 
-  const lpAmount = new BN(10_000_000)
+  const lpAmount = new BN(1_000_000_000)
   console.log('LP Amount to burn:', lpAmount.toString())
 
   const slippage = new Percent(1, 100)
