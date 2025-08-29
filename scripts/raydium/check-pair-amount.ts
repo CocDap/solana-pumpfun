@@ -1,13 +1,8 @@
 import { Percent } from '@raydium-io/raydium-sdk-v2';
 import BN from 'bn.js';
-import { initSdk, connection, askQuestion } from './config';
+import { initSdk, connection, askQuestion, formatAmount } from './config';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
-
-function formatAmount(raw: BN, decimals: number, precision = 6): string {
-  const dec = new Decimal(raw.toString()).div(new Decimal(10).pow(decimals));
-  return dec.toFixed(precision);
-}
 
 async function checkPairAmount() {
   try {
@@ -41,15 +36,15 @@ async function checkPairAmount() {
     };
 
     if (!pool.poolKeys?.authority) throw new Error('Pool authority is undefined.');
-    if (new BN(pool.rpcData.baseReserve, 16).isZero() || new BN(pool.rpcData.quoteReserve, 16).isZero()) {
+    if (pool.rpcData.baseReserve.isZero() || pool.rpcData.quoteReserve.isZero()) {
       throw new Error('Pool has no initial liquidity.');
     }
 
     const epochInfo = await connection.getEpochInfo();
     const pairAmount = raydium.cpmm.computePairAmount({
       poolInfo,
-      baseReserve: new BN(pool.rpcData.baseReserve, 16),
-      quoteReserve: new BN(pool.rpcData.quoteReserve, 16),
+      baseReserve: pool.rpcData.baseReserve,
+      quoteReserve: pool.rpcData.quoteReserve,
       amount: amountInput,
       slippage,
       epochInfo,

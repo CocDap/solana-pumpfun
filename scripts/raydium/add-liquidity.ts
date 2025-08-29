@@ -51,7 +51,7 @@ async function addLiquidity() {
     console.dir(poolInfo, { depth: null });
 
     if (!pool.poolKeys?.authority) throw new Error('Pool authority is undefined.');
-    if (new BN(pool.rpcData.baseReserve, 16).isZero() || new BN(pool.rpcData.quoteReserve, 16).isZero()) {
+    if (pool.rpcData.baseReserve.isZero() || pool.rpcData.quoteReserve.isZero()) {
       throw new Error('Pool has no initial liquidity.');
     }
 
