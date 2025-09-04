@@ -22,7 +22,8 @@
         "raydiumRemoveLiquidity": "ts-node scripts/raydium/remove-liquidity.ts",
         "raydiumCheckPool": "ts-node scripts/raydium/check-pool.ts",
         "raydiumGetPool":"ts-node scripts/raydium/get-pool.ts",
-        "raydiumCheckPairAmount": "ts-node scripts/raydium/check-pair-amount.ts"
+        "raydiumCheckPairAmount": "ts-node scripts/raydium/check-pair-amount.ts",
+        "raydiumSwap": "ts-node scripts/raydium/swap.ts"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.30.1",
