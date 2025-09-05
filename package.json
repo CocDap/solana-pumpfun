@@ -21,9 +21,14 @@
         "raydiumAddLiquidity": "ts-node scripts/raydium/add-liquidity.ts",
         "raydiumRemoveLiquidity": "ts-node scripts/raydium/remove-liquidity.ts",
         "raydiumCheckPool": "ts-node scripts/raydium/check-pool.ts",
-        "raydiumGetPool":"ts-node scripts/raydium/get-pool.ts",
+        "raydiumGetPool": "ts-node scripts/raydium/get-pool.ts",
         "raydiumCheckPairAmount": "ts-node scripts/raydium/check-pair-amount.ts",
-        "raydiumSwap": "ts-node scripts/raydium/swap.ts"
+        "raydiumSwap": "ts-node scripts/raydium/swap.ts",
+        "meteoraAddLiquidity": "ts-node scripts/meteora/add-liquidity.ts",
+        "meteoraRemoveLiquidity": "ts-node scripts/meteora/remove-liquidity.ts",
+        "meteoraCreatePool": "ts-node scripts/meteora/create-pool.ts",
+        "meteoraEstimate": "ts-node scripts/meteora/estimate.ts",
+        "meteoraSwap": "ts-node scripts/meteora/swap.ts"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.30.1",
@@ -33,6 +38,7 @@
         "@metaplex-foundation/umi": "^1.2.0",
         "@metaplex-foundation/umi-bundle-defaults": "^1.2.0",
         "@metaplex-foundation/umi-web3js-adapters": "^1.2.0",
+        "@meteora-ag/dlmm": "^1.7.3",
         "@raydium-io/raydium-sdk-v2": "^0.2.17-alpha",
         "@solana-program/memo": "^0.7.0",
         "@solana-program/system": "^0.7.0",
