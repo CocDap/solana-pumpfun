@@ -1,7 +1,6 @@
 import { Cluster, Connection, Keypair, PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import DLMM, { ActivationType } from "@meteora-ag/dlmm";
-import { NATIVE_MINT } from "@solana/spl-token";
 import {
     hasAlphaVault,
     getPoolAddress,
@@ -53,4 +52,4 @@ async function main() {
 
 }
 
-main().catch((err) => console.error("Error while creating pool:", err));
+main().catch((err) => console.error("Error while creating pool:", err));    

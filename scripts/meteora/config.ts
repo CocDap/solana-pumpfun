@@ -24,7 +24,7 @@ export const binStep = new BN(25);
 export const feeBps = new BN(30);
 
 export const activationType = ActivationType.Timestamp;
-export const activationPoint = new BN(Math.floor(Date.now() / 1000) + 3600); // delay 1h
+export const activationPoint = new BN(Math.floor(Date.now() / 1000) + 3600);
 export const hasAlphaVault = false;
 export const creatorPoolOnOffControl = false;
 
@@ -70,11 +70,11 @@ export async function getPoolAddress(connection: Connection): Promise<PublicKey>
       { cluster: "devnet" as Cluster }
     );
     if (!poolAddress) {
-      throw new Error("Pool không tồn tại! Hãy chạy create-pool.ts trước.");
+      throw new Error("Pool not exists! Please run create-pool.ts first.");
     }
     return poolAddress;
   } catch (error) {
-    console.error("Lỗi lấy pool address:", error);
+    console.error("Error getting pool address:", error);
     throw error;
   }
 }
@@ -103,7 +103,7 @@ export async function askQuestion(query: string): Promise<string> {
 export function parseUserAmount(raw: string, decimals: number): BN {
   const dec = new Decimal(raw);
   const scaled = dec.mul(new Decimal(10).pow(decimals));
-  return new BN(scaled.toFixed(0)); // làm tròn xuống integer
+  return new BN(scaled.toFixed(0)); 
 }
 
 
