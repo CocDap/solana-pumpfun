@@ -16,7 +16,7 @@ console.log("Wallet: ", owner.publicKey.toBase58());
 async function createPool() {
     try {
         const raydium = await initSdk();
-        const customMint = new PublicKey('mFdgzb42kwstGicCATiyZUYXbLDmtGvBquDsyQJwQEb');
+        const customMint = new PublicKey('8UjqFBMAimzQmqAtsuZTEZ2unCtBKdQWutQeAxqmyiSJ');
         const wsolMint = new PublicKey(NATIVE_MINT);
         const customDecimals = 9;
         const wsolDecimals = 9;
