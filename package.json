@@ -24,6 +24,7 @@
         "raydiumGetPool": "ts-node scripts/raydium/get-pool.ts",
         "raydiumCheckPairAmount": "ts-node scripts/raydium/check-pair-amount.ts",
         "raydiumSwap": "ts-node scripts/raydium/swap.ts",
+        "raydiumPoolInformation": "ts-node scripts/raydium/pool-information.ts",
         "meteoraAddLiquidity": "ts-node scripts/meteora/add-liquidity.ts",
         "meteoraRemoveLiquidity": "ts-node scripts/meteora/remove-liquidity.ts",
         "meteoraCreatePool": "ts-node scripts/meteora/create-pool.ts",

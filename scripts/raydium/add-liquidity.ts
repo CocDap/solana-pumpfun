@@ -34,7 +34,7 @@ async function addLiquidity() {
     console.log("==================\n");
 
     const raydium = await initSdk();
-    const poolId = new PublicKey('H1iMfmd6D6fTzfrQDe8inxhN9VH2T93wmYkBzthWeneK');
+    const poolId = new PublicKey('BzcM5yWGRFzqDnaZnG8L8PFNh8C2qo4Aw3pSw7BohZLa');
     const pool = await raydium.cpmm.getPoolInfoFromRpc(poolId.toString());
 
     if (!pool || pool.poolInfo.type !== 'Standard') {
@@ -149,11 +149,15 @@ async function addLiquidity() {
         : TOKEN_PROGRAM_ID
     );
 
+    const inputMint = baseIn ? poolInfo.mintA : poolInfo.mintB;
+    const inputDecimals = inputMint.decimals;
+    const inputAmountRaw = new BN(Math.floor(parseFloat(amountInput) * Math.pow(10, inputDecimals)));
+
     console.log('Sending add liquidity transaction...');
     const addLiquidityResult = await raydium.cpmm.addLiquidity({
       poolInfo,
       poolKeys: pool.poolKeys,
-      inputAmount: new BN(Math.floor(parseFloat(amountInput) * 1e9)),
+      inputAmount: inputAmountRaw,
       baseIn,
       slippage,
       config: {
