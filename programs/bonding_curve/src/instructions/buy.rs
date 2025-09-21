@@ -13,13 +13,13 @@ pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> R
     // TODO: Implement buy function
     let bonding_curve = &mut ctx.accounts.bonding_curve_account;
     let bonding_curve_configuration = &mut ctx.accounts.bonding_curve_configuration;
-
     let user = &ctx.accounts.user;
+    let creator = bonding_curve_configuration.global_admin;
     let system_program = &ctx.accounts.system_program;
     let token_program = &ctx.accounts.token_program;
     let pool_sol_vault = &mut ctx.accounts.pool_sol_vault;
-
     let bonding_curve_type: u8 = bonding_curve_configuration.bonding_curve_type.into();
+    // Check if the user is the pool creator
     let fee_percentage: u16 = bonding_curve_configuration.fee_percentage;
     let token_one_accounts = (
         &mut *ctx.accounts.token_mint,
@@ -40,39 +40,43 @@ pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> R
         system_program,
     )?;
 
-    // transfer fees to recipients
-    // for recipient in ctx.remaining_accounts {
-    //     // check if recipient is a valid address in the fee recipients
-    //     if !bonding_curve_configuration
-    //         .fee_recipients
-    //         .iter()
-    //         .any(|r| r.address == recipient.clone().key())
-    //     {
-    //         return Err(CommonCustomError::FeeRecipientNotFound.into());
-    //     }
-
-    //     let amount_each_gets = bonding_curve_configuration
-    //         .fee_recipients
-    //         .iter()
-    //         .find(|r| r.address == recipient.clone().key())
-    //         .unwrap()
-    //         .amount;
-
-    //     let cpi_accounts = system_program::Transfer {
-    //         from: ctx.accounts.user.to_account_info(),
-    //         to: recipient.to_account_info(),
-    //     };
-    //     let cpi_program = system_program.to_account_info();
-    //     let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
-
-    //     let res = system_program::transfer(cpi_context, amount_each_gets);
-    //     if !res.is_ok() {
-    //         return Err(CommonCustomError::TransferFailed.into());
-    //     }
-
-    // }
-
     Ok(())
+}
+
+pub fn buy_sol<'info>(
+    ctx: Context<'_, '_, '_, 'info, Buy<'info>>,
+    sol_amount: u64,
+    bump: u8,
+) -> Result<()> {
+    let bonding_curve = &mut ctx.accounts.bonding_curve_account;
+    let bonding_curve_configuration = &mut ctx.accounts.bonding_curve_configuration;
+
+    let user = &ctx.accounts.user;
+    let system_program = &ctx.accounts.system_program;
+    let token_program = &ctx.accounts.token_program;
+    let pool_sol_vault = &mut ctx.accounts.pool_sol_vault;
+
+    let bonding_curve_type: u8 = bonding_curve_configuration.bonding_curve_type.into();
+    let fee_percentage: u16 = bonding_curve_configuration.fee_percentage;
+    let token_accounts = (
+        &mut *ctx.accounts.token_mint,
+        &mut *ctx.accounts.pool_token_account,
+        &mut *ctx.accounts.user_token_account,
+    );
+
+    bonding_curve.buy_sol_with_token_cost(
+        bonding_curve_configuration,
+        token_accounts,
+        pool_sol_vault,
+        sol_amount,
+        fee_percentage,
+        bump,
+        user,
+        bonding_curve_type,
+        bonding_curve_configuration.target_liquidity,
+        token_program,
+        system_program,
+    )
 }
 
 #[derive(Accounts)]
@@ -90,7 +94,6 @@ pub struct Buy<'info> {
         bump = bonding_curve_account.bump,
     )]
     pub bonding_curve_account: Box<Account<'info, BondingCurve>>,
-
     #[account(mut)]
     pub token_mint: Box<InterfaceAccount<'info, Mint>>,
 

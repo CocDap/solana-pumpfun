@@ -89,7 +89,6 @@ export async function addLiquidityCore(
             baseAmount = inputAmountRaw;
         }
 
-        // 👉 Log chi tiết ảnh hưởng của slippage
         const slippageFraction = slippage / 100;
         const minBase = baseAmount.sub(baseAmount.muln(slippage).divn(100));
         const minQuote = quoteAmount.sub(quoteAmount.muln(slippage).divn(100));
@@ -212,12 +211,10 @@ export async function swapCore(opts: SwapOptions) {
       }
     } else if (direction === 'wsolToCustom') {
       if (exactIn) {
-        // bán quote để lấy base
         amountRaw = new BN(Math.floor(parseFloat(amountInput) * 10 ** quoteDecimals));
         instructions = await pumpAmmSdk.buyQuoteInput(state, amountRaw, slippage);
         console.log(`Selling ${amountInput} WSOL → receive Custom token`);
       } else {
-        // muốn nhận chính xác base
         amountRaw = new BN(Math.floor(parseFloat(amountInput) * 10 ** baseDecimals));
         instructions = await pumpAmmSdk.buyBaseInput(state, amountRaw, slippage);
         console.log(`Receiving exactly ${amountInput} Custom token (will sell WSOL)`);

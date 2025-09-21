@@ -12,7 +12,7 @@ use crate::instructions::allocation::{
 use crate::instructions::*;
 use crate::state::allocation::Vesting;
 use crate::state::Recipient;
-declare_id!("EPA9LC7sm4SmiZXU9yv8h8VfzAUNd3SF7CxyPSiDfNQK");
+declare_id!("BKe6X1Bqwju9XgPkbUjGx1tbKARgsJXrBxhkUoZ5kSHT");
 
 #[program]
 pub mod bonding_curve {
@@ -63,6 +63,9 @@ pub mod bonding_curve {
     pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> Result<()> {
         instructions::buy(ctx, amount)
     }
+    pub fn buy_sol <'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, sol_amount: u64, bump: u8) -> Result<()> {
+        buy::buy_sol(ctx, sol_amount, bump)
+    }
 
     pub fn sell<'info>(
         ctx: Context<'_, '_, '_, 'info, Sell<'info>>,
@@ -71,7 +74,13 @@ pub mod bonding_curve {
     ) -> Result<()> {
         instructions::sell(ctx, amount, bump)
     }
-
+    pub fn sell_with_sol_amount<'info>(
+        ctx: Context<'_, '_, '_, 'info, Sell<'info>>,
+        sol_amount: u64,
+        bump: u8
+    ) -> Result<()> {
+        sell::sell_with_sol_amount(ctx, sol_amount, bump)
+    }
     pub fn add_liquidity(
         ctx: Context<AddLiquidity>,
         sol_amount: u64,

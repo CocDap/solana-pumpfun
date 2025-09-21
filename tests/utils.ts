@@ -53,6 +53,7 @@ const connection = new Connection(clusterApiUrl("devnet"), 'confirmed')
 
 export function getPDAs(user: PublicKey, mint: PublicKey) {
 
+  
   const [curveConfig] = PublicKey.findProgramAddressSync(
     [Buffer.from(CURVE_CONFIGURATION_SEED), mint.toBuffer()],
     program.programId,
@@ -75,7 +76,6 @@ export function getPDAs(user: PublicKey, mint: PublicKey) {
   const userTokenAccount = getAssociatedTokenAddressSync(
     mint, user, true
   )
-
   return {
     curveConfig,
     userTokenAccount,

@@ -49,76 +49,99 @@ pub fn calculate_initial_reserve_amount(
     Ok(initial_reserve as u64)
 }
 
-pub fn linear_buy_cost(amount: u64, reserve_ratio: u16, total_supply: u64) -> Result<u64> {
-    let new_supply = total_supply
-        .checked_add(amount)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+//
+const LAMPORTS_PER_SOL: u64 = 1_000_000_000; // 1 WSOL = 1e9 lamports
+const TOKEN_DECIMALS: u64 = 1_000_000; // Token has 6 decimals
 
-    let new_supply_squared = (new_supply as u128)
-        .checked_mul(new_supply as u128)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+/// Calculate SOL required to buy a given number of tokens.
+pub fn calc_sol_for_buy(
+    delta_t: u64,
+    virtual_sol_reserves: u64,
+    virtual_token_reserves: u64,
+) -> Result<u64> {
+    let a = virtual_token_reserves as u128;
+    let b = virtual_sol_reserves as u128;
+    let dt = delta_t as u128;
 
-    let total_supply_squared = (total_supply as u128)
-        .checked_mul(total_supply as u128)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    let numerator = new_supply_squared
-        .checked_sub(total_supply_squared)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?
-        .checked_div(2)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    let denominator = (reserve_ratio as u128)
-        .checked_mul(10000)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    let cost = numerator
-        .checked_div(denominator)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    if cost > u64::MAX as u128 {
-        return Err(CommonCustomError::OverFlowUnderFlowOccured.into());
-    }
-
-    Ok(cost as u64)
-}
-
-pub fn linear_sell_cost(amount: u64, reserve_ratio: u16, total_supply: u64) -> Result<u64> {
-    if amount > total_supply {
+    if dt >= a {
         return Err(CommonCustomError::InsufficientBalance.into());
     }
 
-    let new_supply = total_supply
-        .checked_sub(amount)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+    let sol_lamports = (b * dt) / (a - dt);
 
-    let total_supply_squared = (total_supply as u128)
-        .checked_mul(total_supply as u128)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+    Ok(sol_lamports as u64)
+}
 
-    let new_supply_squared = (new_supply as u128)
-        .checked_mul(new_supply as u128)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+pub fn calc_tokens_for_buy_sol(
+    sol_amount: u64,             
+    virtual_sol_reserves: u64,   // SOL reserve (lamports)
+    virtual_token_reserves: u64, // Token reserve (smallest unit)
+) -> Result<u64> {
+    let x = virtual_token_reserves as u128;
+    let y = virtual_sol_reserves as u128;
+    let delta_s = sol_amount as u128;
 
-    let numerator = total_supply_squared
-        .checked_sub(new_supply_squared)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?
-        .checked_div(2)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    let denominator = (reserve_ratio as u128)
-        .checked_mul(10000)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    let reward = numerator
-        .checked_div(denominator)
-        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
-    if reward > u64::MAX as u128 {
-        return Err(CommonCustomError::OverFlowUnderFlowOccured.into());
+    if delta_s >= y {
+        return Err(CommonCustomError::InsufficientBalance.into());
     }
 
-    Ok(reward as u64)
+    let numerator = x
+        .checked_mul(y)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+    let denominator = y
+        .checked_sub(delta_s)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+
+    let new_x = numerator
+        .checked_div(denominator)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+    let delta_t = new_x
+        .checked_sub(x)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+
+    Ok(delta_t as u64)
+}
+
+/// Calculate SOL returned when selling a given number of tokens.
+pub fn calc_sol_for_sell_token(
+    delta_t: u64,
+    virtual_sol_reserves: u64,
+    virtual_token_reserves: u64,
+) -> Result<u64> {
+    let a = virtual_token_reserves as u128;
+    let b = virtual_sol_reserves as u128;
+    let dt = delta_t as u128;
+
+    let sol_lamports = (b * dt) / (a + dt);
+
+    Ok(sol_lamports as u64)
+}
+
+/// Calculate number of tokens returned when selling for a given SOL amount.
+pub fn calc_tokens_for_sell_sol(
+    sol_amount: u64,             
+    virtual_sol_reserves: u64,   
+    virtual_token_reserves: u64, 
+) -> Result<u64> {
+    let x = virtual_token_reserves as u128;
+    let y = virtual_sol_reserves as u128;
+    let delta_s = sol_amount as u128;
+
+    let numerator = x
+        .checked_mul(y)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+    let denominator = y
+        .checked_add(delta_s)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+
+    let new_x = numerator
+        .checked_div(denominator)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+    let delta_t = x
+        .checked_sub(new_x)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
+
+    Ok(delta_t as u64)
 }
 
 pub fn quadratic_buy_cost(amount: u64, reserve_ratio: u16, total_supply: u64) -> Result<u64> {
@@ -203,12 +226,12 @@ pub fn calculate_linear_current_price(
         .checked_div(10u64.pow(9u32))
         .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
 
-    let price: u64 = sol_reserve.checked_div(token_reserve).ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
+    let price: u64 = sol_reserve
+        .checked_div(token_reserve)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
 
     Ok(price as u64)
 }
-
 
 // TODO
 
@@ -225,12 +248,12 @@ pub fn calculate_quadratic_current_price(
         .checked_div(10u64.pow(9u32))
         .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
 
-    let price: u64 = sol_reserve.checked_div(token_reserve).ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
-
+    let price: u64 = sol_reserve
+        .checked_div(token_reserve)
+        .ok_or(CommonCustomError::OverFlowUnderFlowOccured)?;
 
     Ok(price as u64)
 }
-
 
 /// Calculate the current price based on bonding curve type
 ///
@@ -248,8 +271,11 @@ pub fn calculate_current_price(
         .map_err(|_| CommonCustomError::InvalidBondingCurveType)?;
 
     match curve_type {
-        BondingCurveType::Linear => calculate_linear_current_price(sol_reserve, token_reserve, token_decimals),
-        BondingCurveType::Quadratic => calculate_quadratic_current_price(sol_reserve, token_reserve, token_decimals),
-    }   
+        BondingCurveType::Linear => {
+            calculate_linear_current_price(sol_reserve, token_reserve, token_decimals)
+        }
+        BondingCurveType::Quadratic => {
+            calculate_quadratic_current_price(sol_reserve, token_reserve, token_decimals)
+        }
+    }
 }
-
