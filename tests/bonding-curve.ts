@@ -748,7 +748,7 @@ describe("bonding_curve", () => {
   //       poolSolVault,
   //       poolTokenAccount,
   //       userTokenAccount,
-  //       poolSolVaultBump // <- nhớ getPDAs trả về bump này
+  //       poolSolVaultBump // 
   //     } = getPDAs(signer.publicKey, mintLatest);
 
   //     console.log("Curve Config:", curveConfig.toBase58());
@@ -768,7 +768,6 @@ describe("bonding_curve", () => {
   //     console.log("Pool SOL Vault Balance Before Swap: ", poolSolBalanceBefore / 1e9, "SOL");
   //     console.log("User SOL Balance Before Swap: ", userSolBalanceBefore / 1e9, "SOL");
 
-  //     // Chỉ định lượng SOL muốn nhận
   //     const solAmount = new BN(0.01 * 1e9); // 0.1 SOL
 
   //     const tx = new Transaction().add(
@@ -778,7 +777,7 @@ describe("bonding_curve", () => {
   //           bondingCurveConfiguration: curveConfig,
   //           bondingCurveAccount: bondingCurve,
   //           tokenMint: mintLatest,
-  //           tokenProgram: TOKEN_PROGRAM_ID, // hoặc TOKEN_2022_PROGRAM_ID nếu dùng SPL 2022
+  //           tokenProgram: TOKEN_PROGRAM_ID, 
   //           associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
   //           poolSolVault,
   //           poolTokenAccount,
@@ -845,7 +844,7 @@ describe("bonding_curve", () => {
   //     console.log("Pool SOL Vault Balance Before Sell: ", poolSolBalanceBefore / 1e9, "SOL");
   //     console.log("User SOL Balance Before Sell: ", userSolBalanceBefore / 1e9, "SOL");
 
-  //     const tokenAmount = new BN(800_000_000); // ví dụ 100 SPL token (nếu token có 6 decimals)
+  //     const tokenAmount = new BN(800_000_000); 
 
   //     const tx = new Transaction().add(
   //       await program.methods
@@ -854,7 +853,7 @@ describe("bonding_curve", () => {
   //           bondingCurveConfiguration: curveConfig,
   //           bondingCurveAccount: bondingCurve,
   //           tokenMint: mintLatest,
-  //           tokenProgram: TOKEN_PROGRAM_ID, // hoặc TOKEN_2022_PROGRAM_ID nếu là SPL 2022
+  //           tokenProgram: TOKEN_PROGRAM_ID, 
   //           associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
   //           poolSolVault,
   //           poolTokenAccount,
