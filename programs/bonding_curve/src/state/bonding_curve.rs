@@ -106,7 +106,7 @@ pub trait BondingCurveAccount<'info> {
         system_program: &Program<'info, System>,
     ) -> Result<()>;
 
-    fn buy(
+    fn buy_quote_input(
         &mut self,
         bonding_configuration_account: &mut Account<'info, CurveConfiguration>,
         token_accounts: (
@@ -125,7 +125,7 @@ pub trait BondingCurveAccount<'info> {
         system_program: &Program<'info, System>,
     ) -> Result<()>;
 
-    fn sell(
+    fn sell_quote_input(
         &mut self,
         bonding_configuration_account: &mut Account<'info, CurveConfiguration>,
         token_accounts: (
@@ -397,7 +397,7 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
         Ok(())
     }
 
-    fn buy(
+    fn buy_quote_input(
         &mut self,
         bonding_configuration_account: &mut Account<'info, CurveConfiguration>,
         token_accounts: (
@@ -557,7 +557,7 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
         Ok(())
     }
 
-    fn sell(
+    fn sell_quote_input(
         &mut self,
         bonding_configuration_account: &mut Account<'info, CurveConfiguration>,
         token_accounts: (

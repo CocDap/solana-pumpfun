@@ -60,26 +60,26 @@ pub mod bonding_curve {
         )
     }
 
-    pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> Result<()> {
-        instructions::buy(ctx, amount)
+    pub fn buy_quote_input<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> Result<()> {
+        instructions::buy_quote_input(ctx, amount)
     }
-    pub fn buy_sol <'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, sol_amount: u64, bump: u8) -> Result<()> {
-        buy::buy_sol(ctx, sol_amount, bump)
+    pub fn buy_base_input<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, sol_amount: u64, bump: u8) -> Result<()> {
+        buy::buy_base_input(ctx, sol_amount, bump)
     }
 
-    pub fn sell<'info>(
+    pub fn sell_quote_input<'info>(
         ctx: Context<'_, '_, '_, 'info, Sell<'info>>,
         amount: u64,
         bump: u8,
     ) -> Result<()> {
-        instructions::sell(ctx, amount, bump)
+        instructions::sell_quote_input(ctx, amount, bump)
     }
-    pub fn sell_with_sol_amount<'info>(
+    pub fn sell_base_input<'info>(
         ctx: Context<'_, '_, '_, 'info, Sell<'info>>,
         sol_amount: u64,
         bump: u8
     ) -> Result<()> {
-        sell::sell_with_sol_amount(ctx, sol_amount, bump)
+        sell::sell_base_input(ctx, sol_amount, bump)
     }
     pub fn add_liquidity(
         ctx: Context<AddLiquidity>,

@@ -702,7 +702,7 @@ describe("bonding_curve", () => {
 
       const tx = new Transaction().add(
         await program.methods
-          .buy(token_amount)
+          .buyQuoteInput(token_amount)
           .accountsStrict({
             bondingCurveConfiguration: curveConfig,
             bondingCurveAccount: bondingCurve,

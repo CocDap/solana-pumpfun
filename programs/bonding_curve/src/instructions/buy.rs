@@ -8,7 +8,7 @@ use crate::consts::*;
 use crate::errors::CommonCustomError;
 use crate::state::{BondingCurve, BondingCurveAccount, CurveConfiguration};
 
-pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> Result<()> {
+pub fn buy_quote_input<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> Result<()> {
     msg!("Trying to buy from the pool");
     // TODO: Implement buy function
     let bonding_curve = &mut ctx.accounts.bonding_curve_account;
@@ -27,7 +27,7 @@ pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> R
         &mut *ctx.accounts.user_token_account,
     );
 
-    bonding_curve.buy(
+    bonding_curve.buy_quote_input(
         bonding_curve_configuration,
         token_one_accounts,
         pool_sol_vault,
@@ -43,7 +43,7 @@ pub fn buy<'info>(ctx: Context<'_, '_, '_, 'info, Buy<'info>>, amount: u64) -> R
     Ok(())
 }
 
-pub fn buy_sol<'info>(
+pub fn buy_base_input<'info>(
     ctx: Context<'_, '_, '_, 'info, Buy<'info>>,
     sol_amount: u64,
     bump: u8,

@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { wallet, askQuestion } from "./config";
+import { wallet, askQuestion } from "";
 import { swapCore } from "./pumfun";
 import { NATIVE_MINT } from "@solana/spl-token";
 import { baseMint, quoteMint, poolKey } from "./constants";

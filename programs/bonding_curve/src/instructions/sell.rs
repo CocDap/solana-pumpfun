@@ -8,7 +8,7 @@ use anchor_lang::system_program;
 use crate::state::{BondingCurve, BondingCurveAccount, CurveConfiguration};
 use crate::consts::*;
 
-pub fn sell<'info>(
+pub fn sell_quote_input<'info>(
     ctx: Context<'_, '_, '_, 'info, Sell<'info>>,
     amount: u64,
     bump: u8,
@@ -28,7 +28,7 @@ pub fn sell<'info>(
         &mut *ctx.accounts.user_token_account,
     );
 
-    bonding_curve.sell(
+    bonding_curve.sell_quote_input(
         bonding_curve_configuration,
         token_accounts,
         pool_sol_vault,
@@ -43,7 +43,7 @@ pub fn sell<'info>(
     )
 }
 
-pub fn sell_with_sol_amount<'info>(
+pub fn sell_base_input<'info>(
     ctx: Context<'_, '_, '_, 'info, Sell<'info>>,
     sol_amount: u64,
     bump: u8,
