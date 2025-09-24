@@ -19,7 +19,7 @@ const tokenMint = new PublicKey("EACCCLYtCanWifwD8CD2iJrqjXvHDTGvA3yxFKfjNu7X");
 
 /// Sell with Quote Input (enter token amount)
 async function sellQuoteInput() {
-  const { curveConfig, bondingCurve, poolTokenAccount, poolSolVault, userTokenAccount } =
+  const { curveConfig, bondingCurve, poolTokenAccount, poolSolVault, userTokenAccount, poolSolVaultBump } =
     await getPDAs(payer.publicKey, tokenMint, program.programId);
 
   const amount = new anchor.BN(1_000_000_000); // example: sell 1 token
@@ -28,7 +28,7 @@ async function sellQuoteInput() {
   printBalances("BEFORE SELL_QUOTE", before);
 
   const tx = await program.methods
-    .sellQuoteInput(amount)
+    .sellQuoteInput(amount, poolSolVaultBump)
     .accounts({
       bondingCurveConfiguration: curveConfig,
       bondingCurveAccount: bondingCurve,
