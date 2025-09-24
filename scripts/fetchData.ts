@@ -7,7 +7,7 @@ import dotenv from "dotenv"
 import BN from "bn.js";
 dotenv.config()
 
-const programId = new PublicKey("CB18NKSvKunD2xeuvEkKfBxuz4fJFJJ8GPy5w1dMzN1");
+const programId = new PublicKey("8xHgHWuASAV8sv5wSptzoa4ZUYkRA5VkpUPSUM4fU3gQ");
 
 
 
@@ -19,12 +19,12 @@ const connection = new Connection("https://api.devnet.solana.com", {
 
 const wallet = getKeypairFromFile(`${os.homedir()}/.config/solana/id.json`);
 
-const team = Keypair.fromSecretKey(bs58.decode(process.env.TEAM_PRIVATE_KEY))
-const advisor = Keypair.fromSecretKey(bs58.decode(process.env.ADVISOR_PRIVATE_KEY))
-console.log("Team:", team.publicKey.toBase58());
-console.log("Advisor:", advisor.publicKey.toBase58());
+// const team = Keypair.fromSecretKey(bs58.decode(process.env.TEAM_PRIVATE_KEY))
+// const advisor = Keypair.fromSecretKey(bs58.decode(process.env.ADVISOR_PRIVATE_KEY))
+// console.log("Team:", team.publicKey.toBase58());
+// console.log("Advisor:", advisor.publicKey.toBase58());
 
-const mintLatest = new PublicKey("91c2ENi1DrFLJBN6vwA2G3vFopXsrF9s8nfMpyF5jgCz");
+const mintLatest = new PublicKey("EACCCLYtCanWifwD8CD2iJrqjXvHDTGvA3yxFKfjNu7X");
 
 async function getCurveConfig() {
 
@@ -62,36 +62,36 @@ async function getBondingCurveAccounts(mint: PublicKey) {
 }
 
 
-async function getAllocationsAndVesting() {
+// async function getAllocationsAndVesting() {
 
-  const wallets = [team.publicKey, advisor.publicKey]
+//   const wallets = [team.publicKey, advisor.publicKey]
 
-  for (const wallet of wallets) {
-  const seeds = [Buffer.from(ALLOCATION_SEED_PREFIX), wallet.toBuffer()];
+//   for (const wallet of wallets) {
+//   const seeds = [Buffer.from(ALLOCATION_SEED_PREFIX), wallet.toBuffer()];
 
 
-  const [allocation, bump] = PublicKey.findProgramAddressSync(seeds, programId);
+//   const [allocation, bump] = PublicKey.findProgramAddressSync(seeds, programId);
 
-  console.log("PDA Address:", allocation.toBase58());
+//   console.log("PDA Address:", allocation.toBase58());
 
-  const accountInfo = await connection.getAccountInfo(allocation);
+//   const accountInfo = await connection.getAccountInfo(allocation);
 
-  if (!accountInfo) {
-    console.log("PDA account does not exist or has no data.");
-    return;
-  }
+//   if (!accountInfo) {
+//     console.log("PDA account does not exist or has no data.");
+//     return;
+//   }
 
-  const decodedData = deserializeAllocationAndVesting(accountInfo.data);
-  console.log("Decoded Allocation Data:", decodedData);
-  }
-}
+//   const decodedData = deserializeAllocationAndVesting(accountInfo.data);
+//   console.log("Decoded Allocation Data:", decodedData);
+//   }
+// }
 
-const mintLatest2 = new PublicKey("6spgRQUqZCW5NmZaV4Ni99tgmYWHVzynb4JdtgZqBKbe");
+const mintLatest2 = new PublicKey("G91dtjKj7SHm8Kui7bnQADT3hjJUZ7KazmVmdeYSsKHY");
 
 
 async function main() {
   await getCurveConfig();
-  await getBondingCurveAccounts(mintLatest2);
+  // await getBondingCurveAccounts(mintLatest2);
 
 
   // await getAllocationsAndVesting();

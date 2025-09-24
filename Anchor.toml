@@ -5,25 +5,13 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-bonding_curve = "BKe6X1Bqwju9XgPkbUjGx1tbKARgsJXrBxhkUoZ5kSHT"
+bonding_curve = "8xHgHWuASAV8sv5wSptzoa4ZUYkRA5VkpUPSUM4fU3gQ"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
 cluster = "Devnet"
-wallet = "~/.config/solana/id.json"
-
-[provider.devnet]
-cluster = "devnet"
-wallet = "~/.config/solana/id.json"
-
-[provider.testnet]
-cluster = "testnet"
-wallet = "~/.config/solana/id.json"
-
-[provider.mainnet-beta]
-cluster = "mainnet-beta"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

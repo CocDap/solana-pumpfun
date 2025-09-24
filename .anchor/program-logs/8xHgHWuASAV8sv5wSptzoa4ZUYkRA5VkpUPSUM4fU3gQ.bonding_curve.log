@@ -1,0 +1,16 @@
+Streaming transaction logs mentioning 8xHgHWuASAV8sv5wSptzoa4ZUYkRA5VkpUPSUM4fU3gQ. Confirmed commitment
+Transaction executed in slot 409921369:
+  Signature: 5n7ukpbCiuJSSzks3fZN3Tg21sFYMsnyp1e7ohbf17WHNVSoS7Jv9uooJAKGkcJfM1LsTD6vjH6fR5D7qZTedLAW
+  Status: Ok
+  Log Messages:
+    Program 8xHgHWuASAV8sv5wSptzoa4ZUYkRA5VkpUPSUM4fU3gQ invoke [1]
+    Program log: Instruction: SellQuoteInput
+    Program log: User will receive 201319504 lamports of SOL
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: TransferChecked
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 6173 of 174624 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 8xHgHWuASAV8sv5wSptzoa4ZUYkRA5VkpUPSUM4fU3gQ consumed 36023 of 200000 compute units
+    Program 8xHgHWuASAV8sv5wSptzoa4ZUYkRA5VkpUPSUM4fU3gQ success
