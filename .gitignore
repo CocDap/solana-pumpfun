@@ -3,3 +3,12 @@ target
 .env
 memory-bank
 Anchor.toml
+*.json
+*.log
+ledger.lock
+genesis.*test-ledger/rocksdb/
+test-ledger/rocksdb/
+test-ledger/
+*.sst
+*.log
+*.lock

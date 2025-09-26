@@ -12,6 +12,7 @@ import { getOrCreateATAInstruction } from "@mercurial-finance/vault-sdk/dist/cjs
 import { derivePoolAddressWithConfig } from "@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils";
 import VaultImpl from "@mercurial-finance/vault-sdk";
 import { createAssociatedTokenAccountIdempotentInstruction, getAssociatedTokenAddressSync, NATIVE_MINT, TOKEN_2022_PROGRAM_ID, getAccount, getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
+
 const connection = new Connection(clusterApiUrl("devnet"), 'confirmed')
 
 
@@ -38,7 +39,7 @@ describe("bonding_curve", () => {
   const mintExample = new PublicKey("9QXB2HnQG4nyXm6YfW7hagCuA2yRt8iG8CJc5fQX1C8")
   const multisig = new PublicKey("97S2XVwgi9fiHJQst9qkN1EeVKbXYy1LUS3MDL3BfxpN");
 
-  const mintLatest = new PublicKey("EACCCLYtCanWifwD8CD2iJrqjXvHDTGvA3yxFKfjNu7X");
+  const mintLatest = new PublicKey("G91dtjKj7SHm8Kui7bnQADT3hjJUZ7KazmVmdeYSsKHY");
 
   const feeRecipient3 = Keypair.generate();
   const governance = Keypair.generate();
@@ -47,7 +48,7 @@ describe("bonding_curve", () => {
   // it("Initialize the contract - SIMULATION ONLY", async () => {
   //   try {
 
-  
+
   //     // Fee Percentage : 100 = 1%
   //     const feePercentage = new BN(100);
   //     const initialQuorum = new BN(500);
@@ -70,7 +71,7 @@ describe("bonding_curve", () => {
   //       },
   //     ]
   //     const {curveConfig, bondingCurve, poolTokenAccount, poolSolVault, userTokenAccount } = getPDAs(signer.publicKey, mintLatest)
-  
+
   //     console.log("=== DRY RUN SIMULATION ===");
   //     console.log("curveConfig", curveConfig.toBase58())
   //     console.log("poolTokenAccount", poolTokenAccount.toBase58())
@@ -78,14 +79,14 @@ describe("bonding_curve", () => {
   //     console.log("userTokenAccount", userTokenAccount.toBase58())
   //     console.log("bondingCurve", bondingCurve.toBase58())
   //     console.log("mintExample", mintExample.toBase58())
-      
+
   //     // Log the parameters being used
   //     console.log("\n=== PARAMETERS ===");
   //     console.log("Initial Reserve:", initialReserve.toString(), "lamports");
   //     console.log("Initial Supply:", initialSupply.toString(), "tokens");
   //     console.log("Reserve Ratio:", reserveRatio.toString(), "basis points (50%)");
   //     console.log("Token Decimals: 6");
-      
+
   //     const tx = new Transaction()
   //       .add(
   //         await program.methods
@@ -108,20 +109,20 @@ describe("bonding_curve", () => {
   //       )
   //     tx.feePayer = signer.payer.publicKey
   //     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash
-  
+
   //     // Sign the transaction for simulation
   //     tx.sign(signer.payer);
-  
+
   //     console.log("\n=== SIMULATING TRANSACTION ===");
-      
+
   //     // Simulate the transaction (dry-run)
   //     const simulation = await connection.simulateTransaction(tx);
-  
+
   //     console.log("✅ Simulation successful!");
   //     console.log("Logs:", simulation.value.logs);
   //     console.log("Units consumed:", simulation.value.unitsConsumed);
   //     console.log("Return data:", simulation.value.returnData);
-      
+
   //     if (simulation.value.err) {
   //       console.log("❌ Simulation error:", simulation.value.err);
   //     } else {
@@ -130,7 +131,7 @@ describe("bonding_curve", () => {
 
   //     const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], { skipPreflight: true, commitment: "confirmed" })
   //     console.log("Successfully created pool with SPL token : ", `https://solscan.io/tx/${sig}?cluster=devnet`)
-  
+
   //   } catch (error) {
   //     console.log("❌ Error during simulation:", error);
   //   }
@@ -395,148 +396,149 @@ describe("bonding_curve", () => {
 
 
 
-  // it(" migrate meteora pool", async () => {
+  it(" migrate meteora pool", async () => {
 
-  //   try {
-  //     const { curveConfig, bondingCurve, poolSolVault, poolTokenAccount, userTokenAccount } = getPDAs(signer.payer.publicKey, mint)
-  //     // const { pool, lpMint, payerPoolLp } = await getMeteoraPDA(SOL_MINT, mint, signer.payer.publicKey);
-  //     const { aVault, aTokenVault, aLpMintPda, bVault, bTokenVault, bLpMintPda } = getVaultPDA(SOL_MINT, mint);
-  //     console.log("aTokenVault", aTokenVault.toBase58());
-  //     console.log("aLpMintPda", aLpMintPda.toBase58());
-  //     console.log("aVault", aVault.toBase58());
-  //     console.log("bTokenVault", bTokenVault.toBase58());
-  //     console.log("bLpMintPda", bLpMintPda.toBase58());
-  //     console.log("bVault", bVault.toBase58());
+    try {
+      const { curveConfig, bondingCurve, poolSolVault, poolTokenAccount, userTokenAccount } = getPDAs(signer.payer.publicKey, mintLatest)
+      // const { pool, lpMint, payerPoolLp } = await getMeteoraPDA(SOL_MINT, mint, signer.payer.publicKey);
+      const { aVault, aTokenVault, aLpMintPda, bVault, bTokenVault, bLpMintPda } = getVaultPDA(SOL_MINT, mintLatest);
+      console.log("aTokenVault", aTokenVault.toBase58());
+      console.log("aLpMintPda", aLpMintPda.toBase58());
+      console.log("aVault", aVault.toBase58());
+      console.log("bTokenVault", bTokenVault.toBase58());
+      console.log("bLpMintPda", bLpMintPda.toBase58());
+      console.log("bVault", bVault.toBase58());
 
-  //     let aVaultLpMint = aLpMintPda;
-  //     let bVaultLpMint = bLpMintPda;
+      let aVaultLpMint = aLpMintPda;
+      let bVaultLpMint = bLpMintPda;
 
-  //     // test pool key 
-  //     const pool = derivePoolAddressWithConfig(SOL_MINT, mint, TEST_CONFIG, METEORA_PROGRAM_ID);
-  //     console.log("pool", pool.toBase58());
+      // test pool key 
+      const pool = derivePoolAddressWithConfig(SOL_MINT, mintLatest, TEST_CONFIG, METEORA_PROGRAM_ID);
+      console.log("pool", pool.toBase58());
 
-  //     const [lpMint] = PublicKey.findProgramAddressSync(
-  //       [Buffer.from("lp_mint"), pool.toBuffer()],
-  //       METEORA_PROGRAM_ID,
-  //     );
-  //     console.log("lpMint", lpMint.toBase58());
+      const [lpMint] = PublicKey.findProgramAddressSync(
+        [Buffer.from("lp_mint"), pool.toBuffer()],
+        METEORA_PROGRAM_ID,
+      );
+      console.log("lpMint", lpMint.toBase58());
 
-  //     const payerPoolLp = getAssociatedTokenAccount(lpMint, signer.payer.publicKey);
-  //     console.log("payerPoolLp", payerPoolLp.toBase58());
+      const payerPoolLp = getAssociatedTokenAccount(lpMint, signer.payer.publicKey);
+      console.log("payerPoolLp", payerPoolLp.toBase58());
 
-  //     let preInstructions: Array<TransactionInstruction> = [];
+      let preInstructions: Array<TransactionInstruction> = [];
+      
+      const [aVaultAccount, bVaultAccount] = await Promise.all([
+        vaultProgram.account.Vault.fetch(aVault),
+        vaultProgram.account.Vault.fetch(bVault),
+      ]);
+      
+      if (!aVaultAccount) {
+        const createVaultAIx = await VaultImpl.createPermissionlessVaultInstruction(provider.connection, signer.payer.publicKey, SOL_MINT);
+        createVaultAIx && preInstructions.push(createVaultAIx);
+        
+      } else {
+        aVaultLpMint = aVaultAccount?.lp_mint; // Old vault doesn't have lp mint pda
+      }
+      if (!bVaultAccount) {
+        const createVaultBIx = await VaultImpl.createPermissionlessVaultInstruction(provider.connection, signer.payer.publicKey, mint);
+        createVaultBIx && preInstructions.push(createVaultBIx);
 
-  //     const [aVaultAccount, bVaultAccount] = await Promise.all([
-  //       vaultProgram.account.vault.fetchNullable(aVault),
-  //       vaultProgram.account.vault.fetchNullable(bVault),
-  //     ]);
-
-  //     if (!aVaultAccount) {
-  //       const createVaultAIx = await VaultImpl.createPermissionlessVaultInstruction(provider.connection, signer.payer.publicKey, SOL_MINT);
-  //       createVaultAIx && preInstructions.push(createVaultAIx);
-
-  //     } else {
-  //       aVaultLpMint = aVaultAccount?.lpMint; // Old vault doesn't have lp mint pda
-  //     }
-  //     if (!bVaultAccount) {
-  //       const createVaultBIx = await VaultImpl.createPermissionlessVaultInstruction(provider.connection, signer.payer.publicKey, mint);
-  //       createVaultBIx && preInstructions.push(createVaultBIx);
-
-  //     } else {
-  //       bVaultLpMint = bVaultAccount?.lpMint; // Old vault doesn't have lp mint pda
-  //     }
-
-
-  //     const [[aVaultLp], [bVaultLp]] = [
-  //       PublicKey.findProgramAddressSync([aVault.toBuffer(), pool.toBuffer()], METEORA_PROGRAM_ID),
-  //       PublicKey.findProgramAddressSync([bVault.toBuffer(), pool.toBuffer()], METEORA_PROGRAM_ID),
-  //     ];
+      } else {
+        bVaultLpMint = bVaultAccount?.lp_mint; // Old vault doesn't have lp mint pda
+      }
 
 
-  //     const [[payerTokenA, createPayerTokenAIx], [payerTokenB, createPayerTokenBIx]] = await Promise.all([
-  //       getOrCreateATAInstruction(SOL_MINT, signer.payer.publicKey, connection),
-  //       getOrCreateATAInstruction(mint, signer.payer.publicKey, connection),
-  //     ]);
-
-  //     createPayerTokenAIx && preInstructions.push(createPayerTokenAIx);
-  //     createPayerTokenBIx && preInstructions.push(createPayerTokenBIx);
+      const [[aVaultLp], [bVaultLp]] = [
+        PublicKey.findProgramAddressSync([aVault.toBuffer(), pool.toBuffer()], METEORA_PROGRAM_ID),
+        PublicKey.findProgramAddressSync([bVault.toBuffer(), pool.toBuffer()], METEORA_PROGRAM_ID),
+      ];
 
 
-  //     let latestBlockHash = await provider.connection.getLatestBlockhash(
-  //       "confirmed"
-  //     );
+      const [[payerTokenA, createPayerTokenAIx], [payerTokenB, createPayerTokenBIx]] = await Promise.all([
+        getOrCreateATAInstruction(SOL_MINT, signer.payer.publicKey, connection),
+        getOrCreateATAInstruction(mint, signer.payer.publicKey, connection),
+      ]);
 
-  //     if (preInstructions.length) {
-  //       const preInstructionTx = new Transaction({
-  //         feePayer: signer.payer.publicKey,
-  //         ...latestBlockHash,
-  //       }).add(...preInstructions);
-
-  //       preInstructionTx.sign(signer.payer);
-  //       const preInxSim = await connection.simulateTransaction(preInstructionTx)
-
-  //       const txHash = await provider.sendAndConfirm(preInstructionTx, [], {
-  //         commitment: "confirmed",
-  //       });
-  //       console.log("Successfully create payer token A and B : ", `https://solscan.io/tx/${txHash}?cluster=devnet`)
-  //     }
+      createPayerTokenAIx && preInstructions.push(createPayerTokenAIx);
+      createPayerTokenBIx && preInstructions.push(createPayerTokenBIx);
 
 
+      let latestBlockHash = await provider.connection.getLatestBlockhash(
+        "confirmed"
+      );
 
-  //     const { protocolTokenAFee, protocolTokenBFee } = getProtocolTokenFeePDA(SOL_MINT, mint, pool);
-  //     const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
-  //     const setComputeUnitLimitIx = anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
-  //       units: 20_000_000,
-  //     });
+      if (preInstructions.length) {
+        const preInstructionTx = new Transaction({
+          feePayer: signer.payer.publicKey,
+          ...latestBlockHash,
+        }).add(...preInstructions);
 
-  //     const tx = new Transaction().add(setComputeUnitLimitIx)
-  //       .add(
-  //         await program.methods
-  //           .migrateMeteoraPool()
-  //           .accounts({
-  //             dexConfigurationAccount: curveConfig,
-  //             bondingCurveAccount: bondingCurve,
-  //             tokenMint: mint,
-  //             poolTokenAccount: poolTokenAccount,
-  //             poolSolVault: poolSolVault,
-  //             pool: pool,
-  //             config: TEST_CONFIG,
-  //             lpMint: lpMint,
-  //             tokenAMint: SOL_MINT,
-  //             tokenBMint: mint,
-  //             aVault: aVault,
-  //             bVault: bVault,
-  //             aVaultLpMint: aVaultLpMint,
-  //             bVaultLpMint: bVaultLpMint,
-  //             aVaultLp: aVaultLp,
-  //             bVaultLp: bVaultLp,
-  //             aTokenVault: aTokenVault,
-  //             bTokenVault: bTokenVault,
-  //             payerTokenA: payerTokenA,
-  //             payerTokenB: payerTokenB,
-  //             payerPoolLp: payerPoolLp,
-  //             protocolTokenAFee: protocolTokenAFee,
-  //             protocolTokenBFee: protocolTokenBFee,
-  //             payer: signer.payer.publicKey,
-  //             rent: SYSVAR_RENT_PUBKEY,
-  //             mintMetadata: mintMetadata,
-  //             metadataProgram: METAPLEX_PROGRAM,
-  //             vaultProgram: METEORA_VAULT_PROGRAM_ID,
-  //             tokenProgram: TOKEN_PROGRAM_ID,
-  //             associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
-  //             systemProgram: SystemProgram.programId,
-  //             meteoraProgram: METEORA_PROGRAM_ID
-  //           })
-  //           .instruction()
-  //       )
-  //     tx.feePayer = signer.payer.publicKey
-  //     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash
-  //     const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], { skipPreflight: true })
-  //     console.log("Successfully migrate meteora pool : ", `https://solscan.io/tx/${sig}?cluster=devnet`)
-  //   } catch (error) {
-  //     console.log("Error in migrate meteora pool :", error)
-  //   }
-  // })
+        preInstructionTx.sign(signer.payer);
+        const preInxSim = await connection.simulateTransaction(preInstructionTx)
+
+        const txHash = await provider.sendAndConfirm(preInstructionTx, [], {
+          commitment: "confirmed",
+        });
+        console.log("Successfully create payer token A and B : ", `https://solscan.io/tx/${txHash}?cluster=devnet`)
+      }
+
+
+
+      const { protocolTokenAFee, protocolTokenBFee } = getProtocolTokenFeePDA(SOL_MINT, mintLatest, pool);
+      const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
+      const setComputeUnitLimitIx = anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+        units: 20_000_000,
+      });
+
+      const tx = new Transaction().add(setComputeUnitLimitIx)
+        .add(
+          await program.methods
+            .migrateMeteoraPool()
+            .accounts({
+              //@ts-ignore
+              dexConfigurationAccount: curveConfig,
+              bondingCurveAccount: bondingCurve,
+              tokenMint: mintLatest,
+              poolTokenAccount: poolTokenAccount,
+              poolSolVault: poolSolVault,
+              pool: pool,
+              config: TEST_CONFIG,
+              lpMint: lpMint,
+              tokenAMint: SOL_MINT,
+              tokenBMint: mintLatest,
+              aVault: aVault,
+              bVault: bVault,
+              aVaultLpMint: aVaultLpMint,
+              bVaultLpMint: bVaultLpMint,
+              aVaultLp: aVaultLp,
+              bVaultLp: bVaultLp,
+              aTokenVault: aTokenVault,
+              bTokenVault: bTokenVault,
+              payerTokenA: payerTokenA,
+              payerTokenB: payerTokenB,
+              payerPoolLp: payerPoolLp,
+              protocolTokenAFee: protocolTokenAFee,
+              protocolTokenBFee: protocolTokenBFee,
+              payer: signer.payer.publicKey,
+              rent: SYSVAR_RENT_PUBKEY,
+              mintMetadata: mintMetadata,
+              metadataProgram: METAPLEX_PROGRAM,
+              vaultProgram: METEORA_VAULT_PROGRAM_ID,
+              tokenProgram: TOKEN_PROGRAM_ID,
+              associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+              systemProgram: SystemProgram.programId,
+              meteoraProgram: METEORA_PROGRAM_ID
+            })
+            .instruction()
+        )
+      tx.feePayer = signer.payer.publicKey
+      tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash
+      const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], { skipPreflight: true })
+      console.log("Successfully migrate meteora pool : ", `https://solscan.io/tx/${sig}?cluster=devnet`)
+    } catch (error) {
+      console.log("Error in migrate meteora pool :", error)
+    }
+  })
 
 
   // it("migrate pumpswap pool", async () => {
@@ -815,81 +817,81 @@ describe("bonding_curve", () => {
   // });
 
 
-  it("swap SPL tokens for SOL (sell)", async () => {
-    try {
-      console.log("Before Sell SPL for SOL");
+  // it("swap SPL tokens for SOL (sell)", async () => {
+  //   try {
+  //     console.log("Before Sell SPL for SOL");
 
-      const {
-        curveConfig,
-        bondingCurve,
-        poolSolVault,
-        poolTokenAccount,
-        userTokenAccount,
-        poolSolVaultBump,
-      } = getPDAs(signer.publicKey, mintLatest);
+  //     const {
+  //       curveConfig,
+  //       bondingCurve,
+  //       poolSolVault,
+  //       poolTokenAccount,
+  //       userTokenAccount,
+  //       poolSolVaultBump,
+  //     } = getPDAs(signer.publicKey, mintLatest);
 
-      console.log("Curve Config:", curveConfig.toBase58());
-      console.log("Bonding Curve:", bondingCurve.toBase58());
-      console.log("Pool SOL Vault:", poolSolVault.toBase58());
-      console.log("Pool Token Account:", poolTokenAccount.toBase58());
-      console.log("User Token Account:", userTokenAccount.toBase58());
+  //     console.log("Curve Config:", curveConfig.toBase58());
+  //     console.log("Bonding Curve:", bondingCurve.toBase58());
+  //     console.log("Pool SOL Vault:", poolSolVault.toBase58());
+  //     console.log("Pool Token Account:", poolTokenAccount.toBase58());
+  //     console.log("User Token Account:", userTokenAccount.toBase58());
 
-      // Balance before
-      const userTokenBalanceBefore = (await connection.getTokenAccountBalance(userTokenAccount)).value.uiAmount;
-      const poolTokenBalanceBefore = (await connection.getTokenAccountBalance(poolTokenAccount)).value.uiAmount;
-      const poolSolBalanceBefore = await connection.getBalance(poolSolVault);
-      const userSolBalanceBefore = await connection.getBalance(signer.publicKey);
+  //     // Balance before
+  //     const userTokenBalanceBefore = (await connection.getTokenAccountBalance(userTokenAccount)).value.uiAmount;
+  //     const poolTokenBalanceBefore = (await connection.getTokenAccountBalance(poolTokenAccount)).value.uiAmount;
+  //     const poolSolBalanceBefore = await connection.getBalance(poolSolVault);
+  //     const userSolBalanceBefore = await connection.getBalance(signer.publicKey);
 
-      console.log("User Token Balance Before Sell: ", userTokenBalanceBefore);
-      console.log("Pool Token Balance Before Sell: ", poolTokenBalanceBefore);
-      console.log("Pool SOL Vault Balance Before Sell: ", poolSolBalanceBefore / 1e9, "SOL");
-      console.log("User SOL Balance Before Sell: ", userSolBalanceBefore / 1e9, "SOL");
+  //     console.log("User Token Balance Before Sell: ", userTokenBalanceBefore);
+  //     console.log("Pool Token Balance Before Sell: ", poolTokenBalanceBefore);
+  //     console.log("Pool SOL Vault Balance Before Sell: ", poolSolBalanceBefore / 1e9, "SOL");
+  //     console.log("User SOL Balance Before Sell: ", userSolBalanceBefore / 1e9, "SOL");
 
-      const tokenAmount = new BN(800_000_000); 
+  //     const tokenAmount = new BN(800_000_000); 
 
-      const tx = new Transaction().add(
-        await program.methods
-          .sellQuoteInput(tokenAmount, poolSolVaultBump)
-          .accountsStrict({
-            bondingCurveConfiguration: curveConfig,
-            bondingCurveAccount: bondingCurve,
-            tokenMint: mintLatest,
-            tokenProgram: TOKEN_PROGRAM_ID, 
-            associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
-            poolSolVault,
-            poolTokenAccount,
-            userTokenAccount,
-            user: signer.payer.publicKey,
-            systemProgram: SystemProgram.programId,
-          })
-          .instruction()
-      );
+  //     const tx = new Transaction().add(
+  //       await program.methods
+  //         .sellQuoteInput(tokenAmount, poolSolVaultBump)
+  //         .accountsStrict({
+  //           bondingCurveConfiguration: curveConfig,
+  //           bondingCurveAccount: bondingCurve,
+  //           tokenMint: mintLatest,
+  //           tokenProgram: TOKEN_PROGRAM_ID, 
+  //           associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+  //           poolSolVault,
+  //           poolTokenAccount,
+  //           userTokenAccount,
+  //           user: signer.payer.publicKey,
+  //           systemProgram: SystemProgram.programId,
+  //         })
+  //         .instruction()
+  //     );
 
-      tx.feePayer = signer.payer.publicKey;
-      tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  //     tx.feePayer = signer.payer.publicKey;
+  //     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-      const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], {
-        skipPreflight: true,
-        commitment: "confirmed",
-      });
+  //     const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], {
+  //       skipPreflight: true,
+  //       commitment: "confirmed",
+  //     });
 
-      console.log("Successfully sold SPL tokens for SOL: ", `https://solscan.io/tx/${sig}?cluster=devnet`);
+  //     console.log("Successfully sold SPL tokens for SOL: ", `https://solscan.io/tx/${sig}?cluster=devnet`);
 
-      // Balance after
-      const userTokenBalanceAfter = (await connection.getTokenAccountBalance(userTokenAccount)).value.uiAmount;
-      const poolTokenBalanceAfter = (await connection.getTokenAccountBalance(poolTokenAccount)).value.uiAmount;
-      const poolSolBalanceAfter = await connection.getBalance(poolSolVault);
-      const userSolBalanceAfter = await connection.getBalance(signer.publicKey);
+  //     // Balance after
+  //     const userTokenBalanceAfter = (await connection.getTokenAccountBalance(userTokenAccount)).value.uiAmount;
+  //     const poolTokenBalanceAfter = (await connection.getTokenAccountBalance(poolTokenAccount)).value.uiAmount;
+  //     const poolSolBalanceAfter = await connection.getBalance(poolSolVault);
+  //     const userSolBalanceAfter = await connection.getBalance(signer.publicKey);
 
-      console.log("User Token Balance After Sell: ", userTokenBalanceAfter);
-      console.log("Pool Token Balance After Sell: ", poolTokenBalanceAfter);
-      console.log("Pool SOL Vault Balance After Sell: ", poolSolBalanceAfter / 1e9, "SOL");
-      console.log("User SOL Balance After Sell: ", userSolBalanceAfter / 1e9, "SOL");
+  //     console.log("User Token Balance After Sell: ", userTokenBalanceAfter);
+  //     console.log("Pool Token Balance After Sell: ", poolTokenBalanceAfter);
+  //     console.log("Pool SOL Vault Balance After Sell: ", poolSolBalanceAfter / 1e9, "SOL");
+  //     console.log("User SOL Balance After Sell: ", userSolBalanceAfter / 1e9, "SOL");
 
-    } catch (error) {
-      console.log("Error in sell SPL for SOL:", error);
-    }
-  });
+  //   } catch (error) {
+  //     console.log("Error in sell SPL for SOL:", error);
+  //   }
+  // });
 
   // it("swap SOL for SPL tokens (sell_with_sol_amount)", async () => {
   //   try {
@@ -1364,10 +1366,8 @@ describe("bonding_curve", () => {
   // it("create fair launch", async () => {
   //   try {
   //     const { fairLaunchData, launchpadTokenAccount, contributionVault } = getFairLaunchPDAs(
+  //       mintLatest,
   //       signer.payer.publicKey,
-  //       mint,
-  //       buyer.publicKey
-
   //     );
 
   //     // Fair launch parameters
@@ -1379,7 +1379,7 @@ describe("bonding_curve", () => {
   //     let distributionDelay = new BN(3600); // 1 hour
   //     let currentTime = Math.floor(Date.now() / 1000);
   //     let startTime = new BN(currentTime + 60); // 1 min from now
-  //     let endTime = new BN(currentTime + 3600); // 1 hour from now
+  //     let endTime = new BN(currentTime + 7200); // 2 hours from now
 
   //     const tx = new Transaction().add(
   //       await program.methods
@@ -1395,7 +1395,7 @@ describe("bonding_curve", () => {
   //         )
   //         .accountsStrict({
   //           fairLaunchData: fairLaunchData,
-  //           tokenMint: mint,
+  //           tokenMint: mintLatest,
   //           launchpadVault: launchpadTokenAccount,
   //           contributionVault: contributionVault,
   //           authority: signer.payer.publicKey,
@@ -1418,6 +1418,124 @@ describe("bonding_curve", () => {
   //   }
   // });
 
+  //   it("contribute to fair launch", async () => {
+  //   try {
+  //     const { fairLaunchData, launchpadTokenAccount, contributionVault } = getFairLaunchPDAs(
+  //       mintLatest,
+  //       signer.payer.publicKey,
+  //     );
+
+  //     const [buyerAccount] = PublicKey.findProgramAddressSync(
+  //       [
+  //         Buffer.from("buyer"), // BUYER_SEED_PREFIX
+  //         fairLaunchData.toBuffer(),
+  //         signer.payer.publicKey.toBuffer(),
+  //       ],
+  //       program.programId
+  //     );
+
+  //     // Amount contribute (0.5 SOL = 0.5 * 1e9 lamports)
+  //     let amount = new BN(500_000_000);
+
+  //     const tx = new Transaction().add(
+  //       await program.methods
+  //         .contributeFairLaunch(amount)
+  //         .accountsStrict({
+  //           fairLaunchData: fairLaunchData,
+  //           buyerAccount: buyerAccount,
+  //           contributionVault: contributionVault,
+  //           contributor: signer.payer.publicKey,
+  //           systemProgram: SystemProgram.programId,
+  //         })
+  //         .instruction()
+  //     );
+
+  //     tx.feePayer = signer.payer.publicKey;
+  //     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+  //     const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], {
+  //       skipPreflight: true,
+  //       commitment: "confirmed",
+  //     });
+
+  //     console.log("Successfully contributed:", `https://solscan.io/tx/${sig}?cluster=devnet`);
+
+  //     // Fetch lại data để verify
+  //     const fairLaunchAccount = await program.account.fairLaunchData.fetch(fairLaunchData);
+  //     const buyerAccountData = await program.account.buyerAccount.fetch(buyerAccount);
+
+  //     console.log("Fair launch total raised:", fairLaunchAccount.totalRaised.toString());
+  //     console.log("Buyer total contribution:", buyerAccountData.amount.toString());
+
+  //     // Check logic
+  //     expect(fairLaunchAccount.totalRaised.gte(amount)).to.be.true;
+  //     expect(buyerAccountData.amount.eq(amount)).to.be.true;
+
+  //   } catch (error) {
+  //     console.log("Error in contribute fair launch:", error);
+  //   }
+  // });
+  it("check phase status", async () => {
+    try {
+      const { fairLaunchData } = getFairLaunchPDAs(
+        mintLatest,
+        signer.payer.publicKey,
+      );
+
+      // Gọi instruction phase_status
+      const tx = new Transaction().add(
+        await program.methods
+          .phaseStatus()
+          .accountsStrict({
+            fairLaunchData: fairLaunchData,
+            tokenMint: mintLatest,
+          })
+          .instruction()
+      );
+
+      tx.feePayer = signer.payer.publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+      const sig = await sendAndConfirmTransaction(connection, tx, [signer.payer], {
+        skipPreflight: true,
+        commitment: "confirmed",
+      });
+
+      console.log("Successfully called phase_status:", `https://solscan.io/tx/${sig}?cluster=devnet`);
+
+      // Fetch lại account để đọc state
+      const fairLaunchAccount = await program.account.fairLaunchData.coder.accounts.decode(
+        "fairLaunchData",
+        (await connection.getAccountInfo(fairLaunchData))!.data
+      );
+
+      // Convert timestamp
+      const startTime = new Date(Number(fairLaunchAccount.startTime) * 1000).toLocaleString();
+      const endTime = new Date(Number(fairLaunchAccount.endTime) * 1000).toLocaleString();
+
+      // Convert lamports -> SOL
+      const softCapSol = Number(fairLaunchAccount.softCap) / 1e9;
+      const hardCapSol = Number(fairLaunchAccount.hardCap) / 1e9;
+      const totalRaisedSol = Number(fairLaunchAccount.totalRaised) / 1e9;
+
+      // Tính phần trăm progress
+      const progressPct = ((totalRaisedSol / hardCapSol) * 100).toFixed(2);
+
+      console.log("FairLaunchData fetched from chain:");
+      console.log("authority:", fairLaunchAccount.authority.toBase58());
+      console.log("token_mint:", fairLaunchAccount.tokenMint.toBase58());
+      console.log("start_time:", startTime);
+      console.log("end_time:", endTime);
+      console.log(`soft_cap: ${softCapSol} SOL`);
+      console.log(`hard_cap: ${hardCapSol} SOL`);
+      console.log(`total_raised: ${totalRaisedSol} SOL`);
+      console.log(`Progress: ${progressPct}% of raise target`);
+
+    } catch (error) {
+      console.error("Error in phase_status test:", error);
+    }
+  });
+  
 
   // it("pause launchpad with fair launch", async () => {
   //   try {

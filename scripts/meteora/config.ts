@@ -12,7 +12,7 @@ import { Decimal } from "decimal.js";
 
 export const RPC_ENDPOINT = "https://api.devnet.solana.com";
 export const WSOL_MINT = NATIVE_MINT;
-export const CUSTOM_TOKEN_MINT = new PublicKey("FUQdkvD5M76SkqMXwXtpzzRTiU87HjTkXuPRgghNNfmt"); 
+export const CUSTOM_TOKEN_MINT = new PublicKey("G91dtjKj7SHm8Kui7bnQADT3hjJUZ7KazmVmdeYSsKHY"); 
 
 if (CUSTOM_TOKEN_MINT.toString() === "YOUR_CUSTOM_TOKEN_MINT_ADDRESS_HERE") {
   throw new Error("Change CUSTOM_TOKEN_MINT with real mint address!");

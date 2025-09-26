@@ -77,7 +77,7 @@ pub fn contribute_fair_launch(
     if total_contribution > fair_launch_data.max_contribution {
         return Err(LaunchPadCustomErrror::ContributionExceedsMaximum.into());
     }
-
+    
     // For fair launch, we calculate tokens based on proportion of total raise
     // This is a simplified calculation - in practice you might want more complex logic
     let estimated_tokens = total_contribution

@@ -185,6 +185,11 @@ pub mod bonding_curve {
         instructions::contribute_fair_launch(ctx, amount)
     }
 
+    pub fn phase_status(
+        ctx: Context<PhaseStatusCtx>,
+    ) -> Result<()> {
+        instructions::phase_status(ctx)
+    }
     pub fn distribute_tokens(ctx: Context<DistributeTokens>) -> Result<()> {
         instructions::distribute_tokens(ctx)
     }

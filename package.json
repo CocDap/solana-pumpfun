@@ -35,7 +35,8 @@
         "pumpfunRemoveLiquidity": "ts-node scripts/pumpfun/remove-liquidity.ts",
         "pumpfunSwap": "ts-node scripts/pumpfun/swap.ts",
         "bondingCurveBuy": "ts-node scripts/bonding-curve/buy.ts",
-        "bondingCurveSell": "ts-node scripts/bonding-curve/sell.ts"
+        "bondingCurveSell": "ts-node scripts/bonding-curve/sell.ts",
+        "launchpadPhaseStatus": "ts-node scripts/launchpad/phase-status.ts"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.30.1",
